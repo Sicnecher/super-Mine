@@ -21,12 +21,27 @@ let gBoard= {
       }
       
       let mine = "💣"
+      let mark="⚠"
       
-   
-   
+      let archiveMoves
+
+      let safeClicks = 3
+
+      let safeSpot='❤'
+
+      let createManually;
+
+      let gMines=0
+
+      let board
    
    function onInit(){
-   
+   if(confirm("Create manually mode?") == true){
+    createManually = true
+   }else{
+    createManually = false
+
+   }
    }
    
    function buildBoard(){
@@ -37,6 +52,8 @@ let gBoard= {
            board[i][j] = " "
        }
    }
+   if(createManually==true){
+   }else{
            for(let x = 0; x<gLevel.MINES; x++){
                let randomIdx = getRandomInt(1, gLevel.SIZE-1)
                let randomSubIdx = getRandomInt(1, gLevel.SIZE-1)
@@ -46,10 +63,15 @@ let gBoard= {
                    x--
                }
            }
+           board = setMineEggsCount(board)
+        }
            return board
        }
-   
-   
+       board=buildBoard()
+       
+       if(createManually==true && gMines<3){
+        board+=onCellClicked()
+       }
    
    function setMineEggsCount(board){
        
@@ -81,36 +103,68 @@ let gBoard= {
                }
            }
        }
-       
+       renderBoard(board)
        return board
    }
+
    
-   console.table(setMineEggsCount(buildBoard()))
+   
+
    function renderBoard(board){
+    console.table(board)
     let strHTML=''
    for(let i = 0; i<board.length; i++){
-    strHTML+='<tr>'
+    strHTML+=`<div class="cell">`
     for(let j = 0; j<board[0].length; j++){
-        strHTML+=`<td onClick='onCellClicked(this)' onContextMenue='onCellMarked(this)' id-i-j='${i, j}'>
+        strHTML+=`<div class='cell' onClick='onCellClicked(this)' onContextMenu='onCellMarked(this)' data-i='${i}' data-j='${j}' data-checked="1">
         
-        </td>`
+        </div>`
     }
-    strHTML+='</tr>\n'
+    strHTML+='</div>\n'
    }
    document.querySelector(`.board`).innerHTML=strHTML
    return (strHTML)
    }
-   console.log(renderBoard(setMineEggsCount(buildBoard())))
+   renderBoard(board)
+
    function onCellClicked(elCell){
-   
+    let i = elCell.dataset.i
+    let j = elCell.dataset.j
+    if(createManually==true && gMines<gLevel.MINES){
+        gMines++
+        board[i][j] = mine
+        if(gMines==gLevel.MINES){
+            alert("You are done placing")
+            board=setMineEggsCount(board)
+        }
+    }else if(board[i][j]==mine){
+        elCell.innerHTML=mine
+        checkGameOver()
+    }else if(board[i][j]==" "){
+        expandShown(board, elCell, i, j)
+    }else{
+        elCell.innerHTML=board[i][j]
+        checkGameOver()
+    }
    }
-   
+    
    function onCellMarked(elCell){
-   
+    if(elCell.innerHTML==mark){
+        
+        elCell.innerHTML=""
+    }else{
+        elCell.innerHTML=mark
+    }
    }
+   
    
    function checkGameOver(){
-   
+    for(let i =0; i<board.length; i++){
+        for(let j = 0; j<board[0].length; j++){
+            if(board[i][j]==0){
+            }
+        }
+    }
    }
    
    function expandShown(board, elCell, i, j){
@@ -121,3 +175,32 @@ let gBoard= {
        let randomNum = Math.floor(Math.random() * (max - min + 1)) + min
        return randomNum
    }
+
+ function hint(){
+
+ }
+
+ function safeClick(){
+    if(safeClicks>0){
+        checkSafe()
+        
+    }else{
+        alert("you have 0 safe clicks!")
+    }
+ }
+
+ function checkSafe(){
+    let i = getRandomInt(0, board.length-1)
+        let iPlace=document.querySelectorAll(`[data-i='${i}']`)
+        let j = getRandomInt(0, board.length-1)
+            let jPlace = iPlace[0]
+            if(board[i][j]!==mine && jPlace.dataset.checked=="1"){
+                jPlace.dataset.checked='2'
+                jPlace.innerHTML = safeSpot
+                safeClicks--
+             document.querySelector("h2").innerHTML = `You have ${safeClicks} clicks!`  
+             return jPlace
+        
+    }
+ }
+
