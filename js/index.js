@@ -37,23 +37,23 @@ let gBoard= {
    
    function onInit(){
    if(confirm("Create manually mode?") == true){
-    createManually = true
+    createManually = 1
+    board=buildBoard()
    }else{
-    createManually = false
-
+    createManually = 2
+    board=buildBoard()
    }
    }
    
    function buildBoard(){
-       let board = []
+        board = []
           for(let i = 0; i<gLevel.SIZE; i++){
            board[i]=[]
        for(let j = 0; j<gLevel.SIZE; j++){
            board[i][j] = " "
        }
    }
-   if(createManually==true){
-   }else{
+   if(createManually==2){
            for(let x = 0; x<gLevel.MINES; x++){
                let randomIdx = getRandomInt(1, gLevel.SIZE-1)
                let randomSubIdx = getRandomInt(1, gLevel.SIZE-1)
@@ -64,14 +64,13 @@ let gBoard= {
                }
            }
            board = setMineEggsCount(board)
+        }else{
+            renderBoard(board)
         }
            return board
        }
-       board=buildBoard()
        
-       if(createManually==true && gMines<3){
-        board+=onCellClicked()
-       }
+       
    
    function setMineEggsCount(board){
        
@@ -125,12 +124,12 @@ let gBoard= {
    document.querySelector(`.board`).innerHTML=strHTML
    return (strHTML)
    }
-   renderBoard(board)
+   
 
    function onCellClicked(elCell){
     let i = elCell.dataset.i
     let j = elCell.dataset.j
-    if(createManually==true && gMines<gLevel.MINES){
+    if(createManually==1 && gMines<gLevel.MINES){
         gMines++
         board[i][j] = mine
         if(gMines==gLevel.MINES){
