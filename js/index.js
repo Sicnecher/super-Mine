@@ -1,5 +1,3 @@
-
-
 let gBoard= {
     minesAroundCount: 4,
     isShown: false,
@@ -20,6 +18,7 @@ let gBoard= {
        MINES: 3
       }
       
+      let lives = 3
       let mine = "💣"
       let mark="⚠"
       
@@ -34,6 +33,8 @@ let gBoard= {
       let gMines=0
 
       let board
+
+      let marked=0
    
    function onInit(){
    if(confirm("Create manually mode?") == true){
@@ -127,6 +128,7 @@ let gBoard= {
    
 
    function onCellClicked(elCell){
+    elCell.classList.add("clicked")
     let i = elCell.dataset.i
     let j = elCell.dataset.j
     if(createManually==1 && gMines<gLevel.MINES){
@@ -136,9 +138,14 @@ let gBoard= {
             alert("You are done placing")
             board=setMineEggsCount(board)
         }
+    }else if(elCell.innerHTML==mark){
+        elCell=mark
     }else if(board[i][j]==mine){
         elCell.innerHTML=mine
+        lives--
+        if(lives==0){
         checkGameOver()
+        }
     }else if(board[i][j]==" "){
         expandShown(board, elCell, i, j)
     }else{
@@ -148,26 +155,43 @@ let gBoard= {
    }
     
    function onCellMarked(elCell){
+    let markCount = document.querySelector(`.markCount`)
     if(elCell.innerHTML==mark){
         
-        elCell.innerHTML=""
+        elCell.innerHTML=" "
+        marked--
+        markCount.innerHTML=marked
     }else{
         elCell.innerHTML=mark
+        marked++
+        markCount.innerHTML=marked
     }
    }
    
    
    function checkGameOver(){
-    for(let i =0; i<board.length; i++){
-        for(let j = 0; j<board[0].length; j++){
-            if(board[i][j]==0){
+                if(lives==0){
+                    if(confirm("You ran out of lives!")){
+                        location.reload()
+                    }
+                }
+            }
+   
+   function expandShown(board, elCell, i, j){
+    for(let x=i-1; x<i+2; x++){
+        if(x<0 || x>=board.length) continue;
+        for(let y=j-1; y<j+2; y++){
+            if(y<0 || y>=board[x].length) continue;
+
+            if(board[x][y]==" "){
+                let place = document.querySelectorAll("[data-i='x']")
+                place[y].innerHTML=" "
+            }else if(board[x][y]!==" " && board[x][y]!==mine){
+                let place = document.querySelectorAll("[data-i='x']")
+                place[y].innerHTML=board[x][y]
             }
         }
     }
-   }
-   
-   function expandShown(board, elCell, i, j){
-   
    }
    
    function getRandomInt(min, max){

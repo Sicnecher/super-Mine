@@ -35,6 +35,7 @@ div{
     width:30px;
     height:50px;
     background-color: darkgray;
+    margin-bottom: 10%;
     margin-left: auto;
     margin-right: auto;
     align-items: center;
@@ -52,4 +53,26 @@ button{
     width:60px;
     height:50px;
     background-color: royalblue;
+}
+
+.markCount{
+    width: 60px;
+    height: 50px;
+    margin-left:60%;
+    margin-top: 0%;
+    margin:auto;
+    background-color: green;
+}
+
+.time{
+    width: 60px;
+    height: 50px;
+    margin-left:65%;
+    margin: auto;
+    margin-top: auto;
+    background-color: green;
+}
+
+.clicked{
+    background-color: lavender;
 }
