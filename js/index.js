@@ -35,8 +35,26 @@ let gBoard= {
       let board
 
       let marked=0
+
+      let hintCount = 3
+
+      let placeInArchive = -1
+
+      let archive = []
    
    function onInit(){
+    let level=prompt("Choose level: Begginer, Medium, Expert.")
+    if(level=="begginer"){
+        gLevel.SIZE=4
+        gLevel.MINES=2
+        document.querySelector(`.board`)
+    }else if(level=='medium'){
+        gLevel.SIZE=8
+        gLevel.MINES=14
+    }else if(level=='expert'){
+        gLevel.SIZE=12
+        gLevel.MINES=32
+    }
    if(confirm("Create manually mode?") == true){
     createManually = 1
     board=buildBoard()
@@ -128,6 +146,8 @@ let gBoard= {
    
 
    function onCellClicked(elCell){
+    placeInArchive++
+    archive[placeInArchive]=elCell.innerHTML
     elCell.classList.add("clicked")
     let i = elCell.dataset.i
     let j = elCell.dataset.j
@@ -140,10 +160,17 @@ let gBoard= {
         }
     }else if(elCell.innerHTML==mark){
         elCell=mark
+    }else if(elCell.innerHTML==safeSpot){
+        elCell.innerHTML=board[i][j]
     }else if(board[i][j]==mine){
         elCell.innerHTML=mine
         lives--
-        if(lives==0){
+        if(lives==2){
+            document.querySelector(".lives").innerHTML=`❤❤`
+        }else if(lives==1){
+            document.querySelector(".lives").innerHTML=`❤`
+        }else if(lives==0){
+            document.querySelector(".lives").innerHTML=`💀`
         checkGameOver()
         }
     }else if(board[i][j]==" "){
@@ -172,7 +199,23 @@ let gBoard= {
    function checkGameOver(){
                 if(lives==0){
                     if(confirm("You ran out of lives!")){
+                     document.querySelector(".smile").innerHTML=`💀`   
                         location.reload()
+                    }
+                }
+                let check = 0
+                for(let i=0; i<gLevel.SIZE; i++){
+                    let a = document.querySelectorAll(`data-i='${i}'`)
+                    for(let j = 0; j<gLevel.SIZE; j++){
+                        
+                       if(board[i][j]==a[j].innerHTML || (board[i][j]==mine && a[j].innerHTML==mark)){
+                        check++
+                        if(board[i].length==check ){
+                            if(gLevel.SIZE){
+
+                            }
+                        }
+                       }
                     }
                 }
             }
@@ -184,11 +227,13 @@ let gBoard= {
             if(y<0 || y>=board[x].length) continue;
 
             if(board[x][y]==" "){
-                let place = document.querySelectorAll("[data-i='x']")
+                let place = document.querySelectorAll(`[data-i='${x}']`)
                 place[y].innerHTML=" "
+                place[y].classList.add("clicked")
             }else if(board[x][y]!==" " && board[x][y]!==mine){
-                let place = document.querySelectorAll("[data-i='x']")
+                let place = document.querySelectorAll(`[data-i='${x}']`)
                 place[y].innerHTML=board[x][y]
+                place[y].classList.add("clicked")
             }
         }
     }
@@ -199,8 +244,17 @@ let gBoard= {
        return randomNum
    }
 
- function hint(){
-
+ function hint(elHint){
+    if(hintCount==3){
+        hintCount--
+    elHint.innerHTML=`💡💡`
+    }else if(hintCount==2){
+        hintCount--
+        elHint.innerHTML=`💡`
+    }else if(hintCount==1){
+        hintCount--
+        elHint.innerHTML=`🤡`
+    }
  }
 
  function safeClick(){
@@ -219,11 +273,18 @@ let gBoard= {
             let jPlace = iPlace[0]
             if(board[i][j]!==mine && jPlace.dataset.checked=="1"){
                 jPlace.dataset.checked='2'
-                jPlace.innerHTML = safeSpot
+               let fixIt = jPlace.innerHTML
+               jPlace.innerHTML = safeSpot
                 safeClicks--
              document.querySelector("h2").innerHTML = `You have ${safeClicks} clicks!`  
              return jPlace
         
     }
+    
  }
 
+
+ function restart(){
+    document.querySelector(".smile").innerHTML=`💀`
+    location.reload()
+ }
