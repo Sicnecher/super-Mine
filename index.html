@@ -11,13 +11,17 @@
     <h1>Super Mine Sweeper</h1>
 <div class="smile" onclick="restart()">🙂</div><div class="markCount">0</div><br>
 <div class='hints' onclick="hint(this)">💡💡💡</div><div class="lives">❤❤❤</div>
-    <table>
+    
         <div class="board">
 
         </div>
-    </table><br>
-    <button onClick="safeClick()">Safe Click</button>
+        <button class="megaHint" onclick="megaHint()">🧠</button>
+    <button class="safeClick" onclick="safeClick()">Safe Click</button>
     <h2>You have 3 clicks!</h2>
-    <script src="js/index.js"></script>
+    <button onclick="exterminator()">⚔</button><br>
+    <button onclick="oneBack()">UNDO</button>
+    <script src="js/board.js"></script>
+    <script src="js/function.js"></script>
+    <script src="js/button.js"></script>
 </body>
 </html>
